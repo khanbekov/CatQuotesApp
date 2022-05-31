@@ -1,4 +1,3 @@
-
 class StockSymbol {
   final String currency;
   final String description;
@@ -13,4 +12,14 @@ class StockSymbol {
     required this.symbol,
     required this.type,
   });
+
+  factory StockSymbol.fromJson(Map<String, dynamic> json) {
+    return StockSymbol(
+      currency: json['currency'] as String,
+      description: json['description'] as String,
+      displaySymbol: json['displaySymbol'] as String,
+      symbol: json['symbol'] as String,
+      type: json['type'] as String,
+    );
+  }
 }
