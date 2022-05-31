@@ -86,6 +86,7 @@ class StockSymbolsList extends StatelessWidget {
             symbols[index].displaySymbol,
             style: _biggerFont,
           ),
+          trailing: const Text('\$1000.00'),
         );
       },
     );
