@@ -69,10 +69,16 @@ class MyHomePage extends StatelessWidget {
   }
 }
 
-class StockSymbolsList extends StatelessWidget {
-  const StockSymbolsList({super.key, required this.symbols});
+class StockSymbolsList extends StatefulWidget {
+  const StockSymbolsList({Key? key}) : super(key: key);
 
-  final List<StockSymbol> symbols;
+  @override
+  State<StockSymbolsList> createState() => _StockSymbolsListState();
+}
+
+class _StockSymbolsListState extends State<StockSymbolsList> {
+
+  final symbols = <StockSymbol>[];
   final _biggerFont = const TextStyle(fontSize: 18);
 
   @override
@@ -92,3 +98,4 @@ class StockSymbolsList extends StatelessWidget {
     );
   }
 }
+
