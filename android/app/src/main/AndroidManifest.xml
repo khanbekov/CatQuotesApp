@@ -1,12 +1,12 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.cat_fin">
+    package="com.example.cat_quotes">
     <uses-permission android:name="android.permission.INTERNET" />
    <application
-        android:label="cat_fin"
+        android:label="cat_quotes"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
-            android:name=".MainActivity"
+            android:name="com.example.cat_quotes.MainActivity"
             android:exported="true"
             android:launchMode="singleTop"
             android:theme="@style/LaunchTheme"

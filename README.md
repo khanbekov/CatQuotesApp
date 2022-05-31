@@ -1,4 +1,4 @@
-# cat_fin
+# Cat Qoutes App
 
 Financial app for monitoring qoutes.
 

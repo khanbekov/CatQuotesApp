@@ -9,8 +9,8 @@ String exchange = 'US';
 String token = 'ca6a5ciad3ib7i7s2ui0';
 
 Future<List<StockSymbol>> fetchStockSymbols(http.Client client) async {
-  final response = await client
-      .get(Uri.parse('https://finnhub.io/api/v1/stock/symbol?exchange=$exchange&token=$token'));
+  final response = await client.get(Uri.parse(
+      'https://finnhub.io/api/v1/stock/symbol?exchange=$exchange&token=$token'));
 
   return compute(parseStockSymbols, response.body);
 }
