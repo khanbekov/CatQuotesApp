@@ -1,46 +1,17 @@
-import 'dart:async';
-import 'dart:convert';
-
-import 'package:cat_quotes/model/symbol.dart';
-import 'package:flutter/foundation.dart';
+import 'package:cat_quotes/api.dart';
+import 'package:cat_quotes/models.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
+// Exchange, which quotes will receive
 String exchange = 'US';
+// Token from finhub.io
 String token = 'ca6a5ciad3ib7i7s2ui0';
 
-Future<List<StockSymbol>> fetchStockSymbols(http.Client client) async {
-  final response = await client.get(Uri.parse(
-      'https://finnhub.io/api/v1/stock/symbol?exchange=$exchange&token=$token'));
+void main() => runApp(const CatQuotesApp());
 
-  return compute(parseStockSymbols, response.body);
-}
-
-Future<Object> fetchQuote(http.Client client, String symbol) async {
-  final response = await client.get(
-      Uri.parse('https://finnhub.io/api/v1/quote?symbol=$symbol&token=$token'));
-
-  return compute(parseQuote, response.body);
-}
-
-List<StockSymbol> parseStockSymbols(String responseBody) {
-  final parsed = jsonDecode(responseBody).cast<Map<String, dynamic>>();
-
-  return parsed.map<StockSymbol>((json) => StockSymbol.fromJson(json)).toList();
-}
-
-Object parseQuote(String responseBody) {
-  if (kDebugMode) {
-    print(responseBody);
-  }
-  Map<String, dynamic> parsed = jsonDecode(responseBody);
-  return parsed['c'];
-}
-
-void main() => runApp(const MyApp());
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class CatQuotesApp extends StatelessWidget {
+  const CatQuotesApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -48,13 +19,13 @@ class MyApp extends StatelessWidget {
 
     return const MaterialApp(
       title: appTitle,
-      home: MyHomePage(title: appTitle),
+      home: CatQuotesHomePage(title: appTitle),
     );
   }
 }
 
-class MyHomePage extends StatelessWidget {
-  const MyHomePage({super.key, required this.title});
+class CatQuotesHomePage extends StatelessWidget {
+  const CatQuotesHomePage({super.key, required this.title});
 
   final String title;
 
@@ -65,7 +36,8 @@ class MyHomePage extends StatelessWidget {
         title: Text(title),
       ),
       body: FutureBuilder<List<StockSymbol>>(
-        future: fetchStockSymbols(http.Client()),
+        future: fetchStockSymbols(
+            httpClient: http.Client(), exchange: exchange, token: token),
         builder: (context, snapshot) {
           if (snapshot.hasError) {
             return const Center(
@@ -104,7 +76,10 @@ class StockSymbolsList extends StatelessWidget {
           trailing: ConstrainedBox(
             constraints: const BoxConstraints.tightFor(width: 200, height: 100),
             child: FutureBuilder(
-              future: fetchQuote(http.Client(), symbols[index].displaySymbol),
+              future: fetchQuote(
+                  httpClient: http.Client(),
+                  symbol: symbols[index].displaySymbol,
+                  token: token),
               builder: (context, snapshot) {
                 if (snapshot.hasError) {
                   return const Center(
