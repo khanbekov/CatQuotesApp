@@ -16,10 +16,25 @@ Future<List<StockSymbol>> fetchStockSymbols(http.Client client) async {
   return compute(parseStockSymbols, response.body);
 }
 
+Future<Object> fetchQuote(http.Client client, String symbol) async {
+  final response = await client.get(
+      Uri.parse('https://finnhub.io/api/v1/quote?symbol=$symbol&token=$token'));
+
+  return compute(parseQuote, response.body);
+}
+
 List<StockSymbol> parseStockSymbols(String responseBody) {
   final parsed = jsonDecode(responseBody).cast<Map<String, dynamic>>();
 
   return parsed.map<StockSymbol>((json) => StockSymbol.fromJson(json)).toList();
+}
+
+Object parseQuote(String responseBody) {
+  if (kDebugMode) {
+    print(responseBody);
+  }
+  Map<String, dynamic> parsed = jsonDecode(responseBody);
+  return parsed['c'];
 }
 
 void main() => runApp(const MyApp());
@@ -86,7 +101,27 @@ class StockSymbolsList extends StatelessWidget {
             symbols[index].displaySymbol,
             style: _biggerFont,
           ),
-          trailing: const Text('\$1000.00'),
+          trailing: ConstrainedBox(
+            constraints: const BoxConstraints.tightFor(width: 200, height: 100),
+            child: FutureBuilder(
+              future: fetchQuote(http.Client(), symbols[index].displaySymbol),
+              builder: (context, snapshot) {
+                if (snapshot.hasError) {
+                  return const Center(
+                    child: Text('An error has occurred!',
+                        style: TextStyle(color: Colors.red)),
+                  );
+                } else if (snapshot.hasData) {
+                  return Text(
+                    '\$${snapshot.data}',
+                    textAlign: TextAlign.right,
+                  );
+                } else {
+                  return const Text('');
+                }
+              },
+            ),
+          ),
         );
       },
     );
